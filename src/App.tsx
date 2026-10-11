@@ -1037,6 +1037,18 @@ export default function App() {
             setActiveTicketModal(reg);
           }}
           onAskAI={(a) => handleAskAI(a)}
+          onDeleteActivity={async (a) => {
+            const confirmDelete = window.confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบกิจกรรม "${a.title}" ทันที? (ข้อมูลการลงทะเบียนจะถูกลบด้วย)`);
+            if (!confirmDelete) return;
+            try {
+              await api.deleteActivity(a.id);
+              showToast('ลบกิจกรรมเรียบร้อยแล้ว', 'success');
+              setSelectedActivity(null);
+              await refreshData();
+            } catch (err: any) {
+              showToast(err.message || 'ไม่สามารถลบกิจกรรมได้', 'error');
+            }
+          }}
         />
       )}
 
