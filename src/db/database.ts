@@ -640,7 +640,7 @@ export const dbService = {
     }
 
     await this.recalculateUserStats(userId);
-    return { cancelledReg: reg, promotedReg };
+    return { cancelledReg: { ...reg, status: 'CANCELLED' }, promotedReg };
   },
 
   async checkIn(id: number): Promise<Registration | null> {
