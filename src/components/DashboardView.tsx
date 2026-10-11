@@ -92,21 +92,21 @@ Show-up Rate: ${dashboard.show_up_rate}% (สูตรคำนวณ: Checked-i
     setTimeout(() => setCopiedReport(false), 2000);
   };
 
-  const handleExtendDuration = async (additionalDays: number) => {
-    if (!dashboard?.activity) return;
-    const currentEnd = dashboard.activity.end_date ? new Date(dashboard.activity.end_date) : new Date();
-    const newEnd = new Date(Math.max(Date.now(), currentEnd.getTime()) + additionalDays * 24 * 60 * 60 * 1000);
-    newEnd.setHours(18, 0, 0, 0);
+  const [editingEndDate, setEditingEndDate] = useState(false);
+  const [customEndDate, setCustomEndDate] = useState('');
 
+  const handleUpdateEndDate = async (targetDateIso: string) => {
+    if (!dashboard?.activity) return;
     try {
       await api.updateActivity(dashboard.activity.id, {
-        end_date: newEnd.toISOString(),
+        end_date: targetDateIso,
       });
-      alert(`ขยายเวลากิจกรรมเพิ่ม ${additionalDays} วัน เรียบร้อยแล้ว`);
+      alert('อัปเดตเวลาสิ้นสุดกิจกรรมเรียบร้อยแล้ว');
+      setEditingEndDate(false);
       if (onRefreshData) onRefreshData();
       loadDashboard(dashboard.activity.id);
     } catch (err: any) {
-      alert(err.message || 'ไม่สามารถขยายเวลาได้');
+      alert(err.message || 'ไม่สามารถอัปเดตเวลาได้');
     }
   };
 
@@ -226,21 +226,54 @@ Show-up Rate: ${dashboard.show_up_rate}% (สูตรคำนวณ: Checked-i
           </div>
 
           <div className="flex flex-wrap items-center gap-2 self-start md:self-auto shrink-0">
-            <span className="text-xs font-semibold text-slate-600 hidden sm:inline">ปรับเวลานานขึ้น:</span>
-            <button
-              type="button"
-              onClick={() => handleExtendDuration(3)}
-              className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors cursor-pointer"
-            >
-              +3 วัน
-            </button>
-            <button
-              type="button"
-              onClick={() => handleExtendDuration(7)}
-              className="px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold transition-colors cursor-pointer"
-            >
-              +7 วัน (1 สัปดาห์)
-            </button>
+            {editingEndDate ? (
+              <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-2xl border border-indigo-200">
+                <input
+                  type="datetime-local"
+                  value={customEndDate}
+                  onChange={(e) => setCustomEndDate(e.target.value)}
+                  className="px-2.5 py-1.5 rounded-xl border border-slate-300 text-xs bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!customEndDate) {
+                      alert('กรุณาเลือกวันและเวลาสิ้นสุด');
+                      return;
+                    }
+                    handleUpdateEndDate(new Date(customEndDate).toISOString());
+                  }}
+                  className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-colors cursor-pointer"
+                >
+                  บันทึก
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingEndDate(false)}
+                  className="px-2.5 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  ยกเลิก
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  const currentEnd = dashboard.activity.end_date
+                    ? new Date(dashboard.activity.end_date)
+                    : new Date();
+                  const offset = currentEnd.getTimezoneOffset() * 60000;
+                  const localIso = new Date(currentEnd.getTime() - offset).toISOString().slice(0, 16);
+                  setCustomEndDate(localIso);
+                  setEditingEndDate(true);
+                }}
+                className="px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+              >
+                <Calendar className="w-3.5 h-3.5" />
+                <span>แก้ไขเวลาสิ้นสุด (เลือกเวลาอิสระ)</span>
+              </button>
+            )}
+
             <button
               type="button"
               onClick={handleDeleteActivity}

@@ -97,13 +97,6 @@ export const CreateActivityModal: React.FC<CreateActivityModalProps> = ({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Extend duration quick preset handler
-  const extendDurationDays = (days: number) => {
-    const base = startDate ? new Date(startDate) : new Date();
-    const newEnd = new Date(base.getTime() + days * 24 * 60 * 60 * 1000);
-    newEnd.setHours(18, 0, 0, 0);
-    setEndDate(formatToLocalDateTimeInput(newEnd));
-  };
 
   // Current minimum selectable datetime (now)
   const minDateTime = formatToLocalDateTimeInput(new Date());
@@ -363,53 +356,13 @@ export const CreateActivityModal: React.FC<CreateActivityModalProps> = ({
             </div>
           </div>
 
-          {/* Quick Duration Extension & Auto-Delete Notice */}
-          <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-slate-700">ปรับระยะเวลากิจกรรมให้นานขึ้น (ขยายเวลาสิ้นสุด):</span>
-              <span className="text-[11px] text-indigo-600 font-semibold">คลิกเลือกเพื่อขยาย</span>
-            </div>
-            <div className="flex flex-wrap gap-1.5 text-xs">
-              <button
-                type="button"
-                onClick={() => extendDurationDays(1)}
-                className="px-2.5 py-1.5 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 font-semibold text-slate-700 hover:text-indigo-700 transition-colors cursor-pointer"
-              >
-                +1 วัน
-              </button>
-              <button
-                type="button"
-                onClick={() => extendDurationDays(3)}
-                className="px-2.5 py-1.5 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 font-semibold text-slate-700 hover:text-indigo-700 transition-colors cursor-pointer"
-              >
-                +3 วัน
-              </button>
-              <button
-                type="button"
-                onClick={() => extendDurationDays(7)}
-                className="px-2.5 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 font-bold text-indigo-700 hover:bg-indigo-100 transition-colors cursor-pointer"
-              >
-                +7 วัน (1 สัปดาห์)
-              </button>
-              <button
-                type="button"
-                onClick={() => extendDurationDays(14)}
-                className="px-2.5 py-1.5 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 font-semibold text-slate-700 hover:text-indigo-700 transition-colors cursor-pointer"
-              >
-                +14 วัน (2 สัปดาห์)
-              </button>
-              <button
-                type="button"
-                onClick={() => extendDurationDays(30)}
-                className="px-2.5 py-1.5 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 font-semibold text-slate-700 hover:text-indigo-700 transition-colors cursor-pointer"
-              >
-                +30 วัน (1 เดือน)
-              </button>
-            </div>
-            <div className="flex items-start gap-1.5 pt-1 text-[11px] text-amber-800 bg-amber-50/80 p-2 rounded-xl border border-amber-200/60">
-              <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+          {/* Auto-Delete Notice */}
+          <div className="flex items-start gap-2 text-xs text-amber-800 bg-amber-50/90 p-3 rounded-2xl border border-amber-200/80">
+            <Clock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <div>
+              <span className="font-bold block text-amber-900">กำหนดวันและเวลาได้อย่างอิสระ:</span>
               <span>
-                <strong>ระบบลบอัตโนมัติ:</strong> เมื่อถึงวันและเวลาสิ้นสุดกิจกรรมที่กำหนด ระบบจะลบกิจกรรมและข้อมูลการลงทะเบียนออกจากระบบทันที
+                คุณสามารถเลือกวันและเวลาเริ่มต้น - สิ้นสุดกิจกรรมได้ตามต้องการจากช่องเลือกเวลาด้านบน โดยเมื่อถึงเวลาสิ้นสุดกิจกรรมที่กำหนดไว้ ระบบจะลบกิจกรรมและข้อมูลการลงทะเบียนออกจากระบบโดยอัตโนมัติทันที
               </span>
             </div>
           </div>

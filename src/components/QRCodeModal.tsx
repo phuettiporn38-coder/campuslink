@@ -127,16 +127,12 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({ registration, onClose,
               : 'แสดง QR Code นี้ต่อเจ้าหน้าที่ผู้จัด ณ จุดลงทะเบียนหน้างาน'}
           </p>
 
-          {/* Quick Check-in trigger for organizer test */}
-          {onQuickCheckIn && !isCheckedIn && isConfirmed && (
-            <button
-              onClick={() => onQuickCheckIn(qr_token)}
-              className="mt-4 w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 shadow-xs transition-all"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>จำลองการสแกน Check-in (สำหรับผู้จัด)</span>
-            </button>
-          )}
+          {/* Helper notice */}
+          <div className="mt-4 pt-3 border-t border-slate-100 text-center">
+            <span className="text-[11px] text-slate-400">
+              * เจ้าหน้าที่จะทำการสแกน QR Code นี้ผ่านระบบเพื่อยืนยันการเข้าร่วม
+            </span>
+          </div>
         </div>
       </div>
     </div>
