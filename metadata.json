@@ -1,0 +1,7 @@
+{
+  "name": "Campus Activity Platform",
+  "description": "ระบบจัดการกิจกรรมมหาวิทยาลัย Minimal · Modern · Practical รองรับการสมัคร QR Check-in คำนวณ Show-up Rate และ AI Assistant",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
