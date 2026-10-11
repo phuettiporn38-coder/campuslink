@@ -212,14 +212,16 @@ export const repository = {
 
   async deleteActivity(id: number): Promise<boolean> {
     const isReady = await checkSupabaseReady();
+    let supabaseDeleted = false;
     if (isReady) {
       try {
-        await supabaseService.deleteActivity(id);
+        supabaseDeleted = await supabaseService.deleteActivity(id);
       } catch (err) {
         console.warn('[Repository] Supabase deleteActivity error:', err);
       }
     }
-    return await dbService.deleteActivity(id);
+    const sqliteDeleted = await dbService.deleteActivity(id);
+    return isReady ? (supabaseDeleted || sqliteDeleted) : sqliteDeleted;
   },
 
   async createActivity(data: {
