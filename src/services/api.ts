@@ -209,8 +209,13 @@ export const api = {
   },
 
   async deleteActivity(id: number): Promise<{ success: boolean; message: string }> {
+    const token = authStorage.getToken();
+    const headers: Record<string, string> = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
     const res = await fetch(`/api/activities/${id}`, {
       method: 'DELETE',
+      headers,
     });
     if (!res.ok) {
       const err = await parseJsonSafe<any>(res);

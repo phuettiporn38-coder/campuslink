@@ -396,11 +396,36 @@ app.put('/api/activities/:id', async (req, res) => {
   res.json(updated);
 });
 
-// Delete Activity immediately
+// Delete Activity immediately (with authorization check for organizers)
 app.delete('/api/activities/:id', async (req, res) => {
   const id = parseInt(req.params.id);
+  if (isNaN(id)) {
+    return res.status(400).json({ error: 'รหัสกิจกรรมไม่ถูกต้อง' });
+  }
+
+  // Check auth header if present
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.replace('Bearer ', '');
+    const userId = activeSessions.get(token);
+    if (userId) {
+      const user = await repository.getUserById(userId);
+      if (user && user.role !== 'organizer') {
+        return res.status(403).json({ error: 'เฉพาะบัญชีผู้จัดกิจกรรมเท่านั้นที่มีสิทธิ์ลบกิจกรรม' });
+      }
+    }
+  }
+
+  const activity = await repository.getActivityById(id);
+  if (!activity) {
+    return res.status(404).json({ error: 'ไม่พบกิจกรรมที่ต้องการลบ' });
+  }
+
   const success = await repository.deleteActivity(id);
-  res.json({ success, message: 'ลบกิจกรรมเรียบร้อยแล้ว' });
+  if (!success) {
+    return res.status(500).json({ error: 'ไม่สามารถลบกิจกรรมได้ กรุณาลองใหม่อีกครั้ง' });
+  }
+  res.json({ success: true, message: 'ลบกิจกรรมเรียบร้อยแล้ว' });
 });
 
 // Auto-cleanup interval: check and delete expired activities every 15 seconds
