@@ -22,7 +22,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps   # <-- เปลี่ยนตรงนี้
 
       - name: Run Tests
         run: npm test
@@ -42,7 +42,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps   # <-- และเปลี่ยนตรงนี้
 
       - name: Build
         run: npm run build
